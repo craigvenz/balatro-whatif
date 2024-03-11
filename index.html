@@ -102,8 +102,9 @@ function calculate() {
 			if (m) {
 				mult *= parse(m[1]);
 			} else {
-				if (item > 1)
-					mult += parse(item);
+				let i = parse(item);
+				if (i > 1)
+					mult += i;
 			}
 		});
 		return Math.max(mult,1);;
