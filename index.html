@@ -7,26 +7,35 @@
 		<style>
 body { 
 	background-color: #253227;
-	color: #fdfffd
+	color: #fdfffd;
+	font-family: Garamond, Serif;
+	font-size: 1vw
 }
 a:link, a:visited {
 	color: #66C0F4
 }
 .chips {
 	background-color: #008ffd;
-	color: #fdfffd
+	color: #fdfffd;
+	font-size: 1.5vw
 }
 .mult {
 	background-color: #fc4a3f;
-	color: #fdfffd
+	color: #fdfffd;
+	font-size: 1.5vw
 }
 .timesMult {
 	background-color: #ff4b41;
-	color: #fdfffd
+	color: #fdfffd;
+	font-size: 1.5vw
 }
 .score {
-	background-color: #253227;
-	color: #fdfffd
+	background-color: #1d2a2b;
+	color: #fdfffd;
+	font-size: 1.5vw
+}
+.result {
+	font-size: 1.5vw
 }
 		</style>
 	</head>
@@ -47,7 +56,7 @@ You don't have to do the math yourself, just type each chip and mult value, sepa
 			<input class="score" type="text" id="roundScore">
 			<label for="blindTarget">Blind Target:</label>
 			<input class="score" type="text" id="blindTarget">
-			<label id="deficit" />
+			<label class="result" id="deficit" />
 	  	</div>
 	  	<div>
 			<label for="chips">Chips:</label>
@@ -59,7 +68,7 @@ You don't have to do the math yourself, just type each chip and mult value, sepa
 		</div>
 	  	<div>
 			<label for="result">Score total for theoretical hand:</label>
-			<label id="result" />
+			<label class="result" id="result" />
 		</div>
 	</div>
 	<hr>
@@ -91,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     result.textContent = pretend.toLocaleString();
 
     const diff = parseFloat(blindTarget.value) - (parseFloat(roundScore.value) + pretend);
-    deficit.textContent = Math.abs(diff).toLocaleString();
+    deficit.textContent = Math.abs(isNaN(diff) ? 0 : diff).toLocaleString();
     deficit.style.color = diff > 0 ? 'red' : 'green';
   }
 });
