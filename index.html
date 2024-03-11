@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Balatro What-If Calculator</title>
-<style>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Balatro What-If Calculator</title>
+		<style>
 body { 
 	background-color: #253227;
 	color: #fdfffd
@@ -13,50 +13,55 @@ a:link, a:visited {
 	color: #66C0F4
 }
 .chips {
-	background-color: #008ffd
+	background-color: #008ffd;
+	color: #fdfffd
 }
 .mult {
-	background-color: #fc4a3f
+	background-color: #fc4a3f;
+	color: #fdfffd
 }
 .timesMult {
-	background-color: #ff4b41
+	background-color: #ff4b41;
+	color: #fdfffd
 }
-input:text {
-	background-color: #1d2a2b
+.score {
+	background-color: #1d2a2b;
+	color: #fdfffd
 }
-</style>
-</head>
+		</style>
+	</head>
 <body>
-<h3>Balatro What-If calculator.</h3>
-<p>Balatro is a fun game, but my math skills are pretty mediocre, at best. A lot of the time I have a hard time knowing if my hand I am thinking of playing is
+	<h3>Balatro What-If calculator.</h3>
+	<p>Balatro is a fun game, but my math skills are pretty mediocre, at best. A lot of the time I have a hard time knowing if my hand I am thinking of playing is
 going to reach the stated score I need to reach, especially on boss blinds like <i>The Needle</i>, <i>The Eye</i>, or <i>The Mouth</i> where I can only play one
 hand, or one specific type of hand. So I made this little fairly throwaway tool, <a href="https://share.linqpad.net/snus8rtq.linq">originally in</a> <a href="https://www.linqpad.net/">LINQPad</a>, but that's only 
 useful for me on my PC, or others who have the tool. So I used ChatGPT to translate to Javascript, and made this instead.</p>
-<h4>Instructions</h4>
-<p>Type your current round score into the round score box. Type the amount you need to reach in the current blind into the Blind Score box.<br>
+	<h4>Instructions</h4>
+	<p>Type your current round score into the round score box. Type the amount you need to reach in the current blind into the Blind Score box.<br>
 Look at the X * Y box for the hand you're thinking of playing, and type the blue value for chips, the red value for mult, and the slightly less red value for xMult.
 You don't have to do the math yourself, just type each chip and mult value, separated by spaces, and the calculator adds them up for you. 
-<div id="app">
-  <div>
-    <label for="roundScore">Round score:</label>
-    <input type="text" id="roundScore">
-    <label for="blindTarget">Blind Target:</label>
-    <input type="text" id="blindTarget">
-    <label id="deficit"></label>
-  </div>
-  <div>
-    <label for="chips">Chips:</label>
-    <input class="chips" type="text" id="chips">
-    <label for="mult">Mult:</label>
-    <input class="mult" type="text" id="mult">
-    <label for="timesMult">x Mult:</label>
-    <input class="timesMult" type="text" id="timesMult">
-  </div>
-  <div>
-	 <label for="result">Score total for theoretical hand:
-	 <label id="result" />
-</div>
-<script>
+	<div id="app">
+		<div>
+			<label for="roundScore">Round score:</label>
+			<input class="score" type="text" id="roundScore">
+			<label for="blindTarget">Blind Target:</label>
+			<input class="score" type="text" id="blindTarget">
+			<label id="deficit" />
+	  	</div>
+	  	<div>
+			<label for="chips">Chips:</label>
+			<input class="chips" type="text" id="chips">
+			<label for="mult">Mult:</label>
+			<input class="mult" type="text" id="mult">
+	    		<label for="timesMult">x Mult:</label>
+			<input class="timesMult" type="text" id="timesMult">
+		</div>
+	  	<div>
+			<label for="result">Score total for theoretical hand:</label>
+			<label id="result" />
+		</div>
+	</div>
+	<script>
 document.addEventListener('DOMContentLoaded', function() {
   const roundScore = document.getElementById('roundScore');
   const blindTarget = document.getElementById('blindTarget');
@@ -76,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sum = (txt) => txt.split(' ').filter(Boolean).map(parseFloat).reduce((acc, val) => acc + val, 0);
     const multiplier = (i) => i === 0 ? 1 : i;
 
-    var pretend = sum(chips.value) * multiplier(sum(mult.value));
+    let pretend = sum(chips.value) * multiplier(sum(mult.value));
     timesMult.value.split(' ').filter(Boolean).map(parseFloat).forEach(item => {
       pretend *= multiplier(item);
     });
@@ -88,13 +93,16 @@ document.addEventListener('DOMContentLoaded', function() {
     deficit.style.color = diff > 0 ? 'red' : 'green';
   }
 });
-</script>
-</body>
-<small>
-<ul>
-<li>Licensed under MIT.</li>
-<li><a href="http://playbalatro.com">Balatro</a> is by <em>LocalThunk</em>, I have no association with them or claim any copyrights, this is just for fun. It's a cool game, you should buy it on your platform of choice.</li>
-<li>Any bugs? Issues? Hate the styling? <a href="https://github.com/craigvenz/balatro-whatif">Submit a pull request.</a></li>
-<li>If this causes you harm or blows up your browser, destroys the word, I didn't do it, it's not my fault. Do some hard thinking.</li>
-</ul>
+	</script>
+	</body>
+	<footer>
+		<small>
+			<ul>
+				<li>Licensed under MIT.</li>
+				<li><a href="http://playbalatro.com">Balatro</a> is by <em>LocalThunk</em>, I have no association with them or claim any copyrights, this is just for fun. It's a cool game, you should buy it on your platform of choice.</li>
+				<li>Any bugs? Issues? Hate the styling? <a href="https://github.com/craigvenz/balatro-whatif">Submit a pull request.</a></li>
+				<li>If this causes you harm or blows up your browser, destroys the word, I didn't do it, it's not my fault. Do some hard thinking.</li>
+			</ul>
+		</small>
+	</footer>
 </html>
