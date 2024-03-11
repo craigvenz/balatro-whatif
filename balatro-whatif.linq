@@ -17,13 +17,16 @@ a:link, a:visited {
 	color: #66C0F4
 }
 .chips {
-	background-color: #008ffd
+	background-color: #008ffd;
+    color: #fdfffd
 }
 .mult {
-	background-color: #fc4a3f
+	background-color: #fc4a3f;
+    color: #fdfffd
 }
 .timesMult {
-	background-color: #ff4b41
+	background-color: #ff4b41;
+    color: #fdfffd
 }
 """);
 TextBox TextBoxWithClass(string css) {
@@ -37,8 +40,8 @@ var timesMult = TextBoxWithClass("timesMult");
 var roundScore = TextBoxWithClass("scores");
 var blindTarget = TextBoxWithClass("scores");
 var deficit = new Label();
-new StackPanel(true, new Label("Round score"), roundScore, new Label("Blind Target"), blindTarget, deficit).Dump();
-new StackPanel(true, new Label("Chips"), chips, new Label("Mult"), mult, new Label("xMult"), timesMult).Dump();
+new StackPanel(true, new Label("Round score:"), roundScore, new Label("Blind Target:"), blindTarget, deficit).Dump();
+new StackPanel(true, new Label("Chips:"), chips, new Label("Mult:"), mult, new Label("xMult:"), timesMult).Dump();
 var result = new Label("0");
 result.Styles["color"] = "#fdfffd";
 new StackPanel(true, new Label("Score total for theoretical hand:"), result).Dump();
@@ -53,9 +56,11 @@ if (!string.IsNullOrEmpty(d))
 Calculate();
 void Calculate(object? sender = null, EventArgs? e = null)
 {
-    decimal Sum(string txt) => txt.Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries)
-                                  .Select(Parse)
-                                  .Sum();
+    IEnumerable<decimal> ParseString(string txt) => 
+        Regex.Split(txt, "\\s*")
+             .Where(x => !string.IsNullOrEmpty(x))
+             .Select(Parse);
+    decimal Sum(string txt) => ParseString(txt).Sum();
     decimal Multiplier(decimal i) => i == 0 ? 1m : i;
     decimal Parse(string txt)
     {
@@ -65,7 +70,7 @@ void Calculate(object? sender = null, EventArgs? e = null)
     Util.SaveString("balatro", JsonConvert.SerializeObject(
         new Data(chips.Text,mult.Text,timesMult.Text,roundScore.Text,blindTarget.Text)));
     var pretend = Sum(chips.Text) * Multiplier(Sum(mult.Text));
-    foreach (var item in timesMult.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries).Select(Parse))
+    foreach (var item in ParseString(timesMult.Text))
         pretend *= Multiplier(item);
     result.Text = $"{pretend:n0}";
     var diff = Parse(blindTarget.Text) - (Parse(roundScore.Text) + pretend);
