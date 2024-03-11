@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     result.textContent = pretend.toLocaleString();
 
     const diff = parseFloat(blindTarget.value) - (parseFloat(roundScore.value) + pretend);
-    deficit.textContent = diff.toLocaleString();
+    deficit.textContent = Math.abs(diff).toLocaleString();
     deficit.style.color = diff > 0 ? 'red' : 'green';
   }
 });
