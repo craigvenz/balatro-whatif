@@ -42,13 +42,15 @@ a:link, a:visited {
 <body>
 	<h3>Balatro What-If calculator.</h3>
 	<p>Balatro is a fun game, but my math skills are pretty mediocre, at best. A lot of the time I have a hard time knowing if my hand I am thinking of playing is
-going to reach the stated score I need to reach, especially on boss blinds like <i>The Needle</i>, <i>The Eye</i>, or <i>The Mouth</i> where I can only play one
+going to reach the stated score I need to reach, especially on <a href="https://balatrogame.fandom.com/wiki/Blinds">boss blinds</a> like <i>The Needle</i>, <i>The Eye</i>, or <i>The Mouth</i> where I can only play one
 hand, or one specific type of hand. So I made this little fairly throwaway tool, <a href="https://raw.githubusercontent.com/craigvenz/balatro-whatif/main/balatro-whatif.linq">originally in</a> <a href="https://www.linqpad.net/">LINQPad</a>, but that's only 
-useful for me on my PC, or others who have the tool. So I used ChatGPT to translate to Javascript, and made this instead.</p>
+useful for me on my PC, or others who have the tool. So I used <a href="https://chat.openai.com/">ChatGPT</a> to translate to Javascript, and made this instead.</p>
 	<h4>Instructions</h4>
 	<p>Type your current round score into the round score box. Type the amount you need to reach in the current blind into the Blind Score box.<br>
-Look at the X * Y box for the hand you're thinking of playing, and type the blue value for chips, the red value for mult, and the slightly less red value for xMult.
-You don't have to do the math yourself, just type each chip and mult value, separated by spaces, and the calculator adds them up for you. 
+Look at the X * Y box for the hand you're thinking of playing, and type the blue value for chips, the red value for mult.<br>
+You don't have to do the math yourself, just type each chip and mult value, separated by spaces, and the calculator adds them up for you.<br>
+Since order of multipliers matters, and order of jokers matters, type from left to right into the mult box as things occur. You'll have to watch how the game does
+these calculations in order to get used to this. Type regular multipliers as digits, and type X multipliers as 'x1.5', 'X3', etc.
 	<hr>
 	<div id="app">
 		<div>
@@ -63,8 +65,6 @@ You don't have to do the math yourself, just type each chip and mult value, sepa
 			<input class="chips" type="text" id="chips">
 			<label for="mult">Mult:</label>
 			<input class="mult" type="text" id="mult">
-	    		<label for="timesMult">x Mult:</label>
-			<input class="timesMult" type="text" id="timesMult">
 		</div>
 	  	<div>
 			<label for="result">Score total for theoretical hand:</label>
@@ -73,37 +73,67 @@ You don't have to do the math yourself, just type each chip and mult value, sepa
 	</div>
 	<hr>
 	<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const roundScore = document.getElementById('roundScore');
-  const blindTarget = document.getElementById('blindTarget');
-  const deficit = document.getElementById('deficit');
-  const chips = document.getElementById('chips');
-  const mult = document.getElementById('mult');
-  const timesMult = document.getElementById('timesMult');
-  const result = document.getElementById('result');
+const chipsInput = document.getElementById('chips');
+const multInput = document.getElementById('mult');
+const roundScoreInput = document.getElementById('roundScore');
+const blindTargetInput = document.getElementById('blindTarget');
 
-  chips.addEventListener('input', calculate);
-  mult.addEventListener('input', calculate);
-  timesMult.addEventListener('input', calculate);
-  roundScore.addEventListener('input', calculate);
-  blindTarget.addEventListener('input', calculate);
+chipsInput.addEventListener('input', calculate);
+multInput.addEventListener('input', calculate);
+roundScoreInput.addEventListener('input', calculate);
+blindTargetInput.addEventListener('input', calculate);
 
-  function calculate() {
-    const sum = (txt) => txt.split(' ').filter(Boolean).map(parseFloat).reduce((acc, val) => acc + val, 0);
-    const multiplier = (i) => i === 0 ? 1 : i;
+function calculate() {
+	function parseString(txt) {
+		return txt.split(/\s+/)
+			  .filter(x => x !== '')
+			  .map(parse);
+	}
 
-    let pretend = sum(chips.value) * multiplier(sum(mult.value));
-    timesMult.value.split(' ').filter(Boolean).map(parseFloat).forEach(item => {
-      pretend *= multiplier(item);
-    });
+	function sum(txt) {
+		return parseString(txt).reduce((acc, val) => acc + val, 0);
+	}
 
-    result.textContent = pretend.toLocaleString();
+	function multiplier(txt) {
+		let pieces = txt.split(/\s+/).filter(x => x !== '');
+		let mult = 0;
+		pieces.forEach(item => {
+			let m = item.match(/[xX](\d+(\.\d+)?)/);
+			if (m) {
+				mult *= parse(m[1]);
+			} else {
+				if (item > 1)
+					mult += parse(item);
+			}
+		});
+		return Math.max(mult,1);;
+	}
 
-    const diff = parseFloat(blindTarget.value) - (parseFloat(roundScore.value) + pretend);
-    deficit.textContent = Math.abs(isNaN(diff) ? 0 : diff).toLocaleString();
-    deficit.style.color = diff > 0 ? 'red' : 'green';
-  }
-});
+	function parse(txt) {
+		let i = parseFloat(txt.replace(',',''));
+		return Math.abs(isNaN(i) ? 0 : i);
+	}
+	
+	function format(n) {
+		return n.toLocaleString(undefined, { maximumFractionDigits:0, minimumFractionDigits:0, useGrouping:true });
+	}
+
+	let chips = chipsInput.value;
+	let mult = multInput.value;
+	let roundScore = roundScoreInput.value;
+	let blindTarget = blindTargetInput.value;
+	let result = document.getElementById('result');
+	let deficit = document.getElementById('deficit');
+	
+	let totalChips = sum(chips);
+	let totalMult = multiplier(mult);
+	let pretend = totalChips * totalMult;
+	result.textContent = `${format(totalChips)} * ${format(totalMult)} = ${format(pretend)}`;
+	
+	let diff = parse(blindTarget) - (parse(roundScore) + pretend);
+	deficit.textContent = `${format(Math.abs(isNaN(diff) ? 0 : diff))}`;
+	deficit.style.color = diff > 0 ? 'red' : 'green';
+}
 	</script>
 	</body>
 	<footer>
